@@ -1,0 +1,114 @@
+/* #1. List all city information for cities with a population greater than 1 million. */
+SELECT code
+FROM Country
+WHERE population > 1000000;
+
+/* #2. List the country codes of countries that have cities with a population greater than 1 million. */
+SELECT code
+FROM Country
+WHERE population > 1000000;
+
+/* #3. For each country, list the city (or cities) with the largest population. 
+Select the country code of the country, followed by the province that the city is located in, along with the city name. */
+SELECT city.country, province, city.name
+FROM city
+INNER JOIN (
+	SELECT country, MAX(population) AS pop
+	FROM city
+	GROUP BY country) AS maxp
+ON city.country = maxp.country AND population = maxp.pop
+ORDER BY country;
+
+/* #4. For each country, list its population and the total population of all neighboring countries. 
+ the country code of the country followed by its population, followed by the total population of all neighboring countries (and if it has no neighboring countries, NULL). */
+
+SELECT country.code, country.population, SUM(ocPop)
+FROM country
+JOIN
+	(SELECT country1 AS fcode, country2 AS otherCountry
+	FROM borders
+	UNION
+	SELECT country2 AS fcode, country1 AS otherCountry
+	FROM borders
+	) AS FOO ON country.code = FOO.fcode
+  JOIN
+  	(SELECT code, population AS ocPop
+     FROM country
+   ) AS BAR ON otherCountry = BAR.code
+     
+    
+GROUP BY country.code
+ORDER BY country.code
+;
+
+/* # 5. List countries having a border with another country. */
+
+SELECT code
+FROM country
+WHERE code IN (
+	SELECT country2
+	FROM borders
+) OR code IN (
+    SELECT country1
+    FROM borders
+ );
+
+/* # 6. List countries having at least two borders with another country. */
+
+SELECT code
+FROM country
+JOIN
+	(SELECT country1 AS fcode, country2 AS otherCountry
+	FROM borders
+	UNION
+	SELECT country2 AS fcode, country1 AS otherCountry
+	FROM borders
+	) AS FOO ON country.code = FOO.fcode
+GROUP BY country.code
+HAVING COUNT(code) > 1
+;
+
+/* #7. List countries having no border with another country. */
+
+SELECT code
+FROM country
+WHERE code NOT IN (
+	SELECT country2
+	FROM borders
+) AND code NOT IN (
+    SELECT country1
+    FROM borders
+ );
+
+/* #8. List all countries in Europe or Asia. */
+
+SELECT code
+FROM country
+WHERE code IN(
+    SELECT country
+    FROM encompasses
+    WHERE continent = 'Asia' OR continent = 'Europe'
+    );
+
+/* #9. List all countries in Europe AND Asia. */
+
+SELECT code, name
+FROM country
+WHERE code IN (
+	SELECT country
+    FROM encompasses
+    WHERE continent = 'Asia'
+) AND code IN(
+    SELECT country
+    FROM encompasses
+    WHERE continent = 'Europe'
+);
+
+/* #10. Find the city (or cities) with the largest population. */
+
+SELECT name, population
+FROM city
+WHERE population = (
+	SELECT MAX(population)
+	FROM city
+);
