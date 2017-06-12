@@ -1,0 +1,62 @@
+// XSLT Exercises
+
+// Exercise 1
+<?xml version="1.0" encoding="ISO-8859-1"?>
+    <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        <xsl:template match = "text()"/>
+
+        <xsl:template match = "Department/Title">
+            <xsl:copy-of select = "."> </xsl:copy-of>
+        </xsl:template>
+    </xsl:stylesheet>
+	
+// Mondial Exercises
+// Exercise 1
+<?xml version="1.0" encoding="ISO-8859-1"?>
+    <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        <xsl:template match = "text()" />
+        <xsl:template match="country[@population &gt; 9000000 and @population &lt; 10000000]">
+            <xsl:copy-of select = "."> </xsl:copy-of>
+        </xsl:template>
+
+
+    </xsl:stylesheet>
+
+// Exercise 2
+<?xml version="1.0" encoding="ISO-8859-1"?>
+    <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        <xsl:template match="/">
+            <html>
+                <table border="1">
+                    <xsl:for-each select="countries/country">
+                    <xsl:sort select = "count(language)" order = "descending" />
+                    <xsl:if test = "count(./language) &gt; 3">
+                        <tr>
+                        <td> <b> <xsl:value-of select = "@name" /> </b> </td>
+                        <td> <xsl:value-of select = "@population" /> </td>
+                        <td> <xsl:value-of select = "@area" /> </td>
+                        <td> <xsl:value-of select = "count(./language)" /></td>
+                        </tr>
+                    </xsl:if>
+                    </xsl:for-each>    
+                </table>
+            </html>
+        </xsl:template>
+    </xsl:stylesheet>
+    
+// Exercise 3
+<?xml version="1.0" encoding="ISO-8859-1"?>
+    <xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+        <xsl:template match="/">
+            <countries>
+            <xsl:for-each select="countries/country">
+            <xsl:element name="country">
+              <xsl:attribute name="languages"><xsl:value-of select = "count(./language)" /></xsl:attribute>
+              <xsl:attribute name="cities"><xsl:value-of select = "count(./city)"/></xsl:attribute>
+                <xsl:element name="name"><xsl:value-of select = "@name" /></xsl:element>
+                <xsl:element name="population"> <xsl:value-of select = "@population" /> </xsl:element>
+            </xsl:element>
+            </xsl:for-each>
+            </countries>
+        </xsl:template>
+    </xsl:stylesheet>
